@@ -71,4 +71,38 @@
       const email = form.email.value;
       const vendors = form.vendors.value.split(",").map(v => v.trim().toLowerCase());
       const products = form.products.value.split(",").map(p => p.trim().toLowerCase());
-      const
+      const daysBack = parseInt(form.daysBack.value);
+
+      const endDate = new Date();
+      const startDate = new Date();
+      startDate.setDate(endDate.getDate() - daysBack);
+
+      const payload = {
+        email,
+        vendors,
+        products,
+        start_date: startDate.toISOString(),
+        end_date: endDate.toISOString()
+      };
+
+      const status = document.getElementById("status");
+      status.textContent = "Submitting...";
+
+      try {
+        const res = await fetch("https://cywitness-api.onrender.com/build-report", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload)
+        });
+
+        const data = await res.json();
+        status.textContent = data.message || "Report submitted!";
+      } catch (err) {
+        status.textContent = "Error submitting report.";
+        console.error(err);
+      }
+    });
+  </script>
+</body>
+</html>
+<!-- EOF -->
