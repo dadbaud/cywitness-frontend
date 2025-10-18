@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Cywitness Report Builder</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      padding: 2rem;
+      max-width: 600px;
+      margin: auto;
+      background-color: #f9f9f9;
+    }
+    h1 {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+    label {
+      font-weight: bold;
+      margin-top: 1rem;
+    }
+    input, button {
+      display: block;
+      margin-top: 0.5rem;
+      margin-bottom: 1rem;
+      width: 100%;
+      padding: 0.5rem;
+      font-size: 1rem;
+    }
+    button {
+      background-color: #0078d4;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #005fa3;
+    }
+    #status {
+      margin-top: 1rem;
+      font-weight: bold;
+      color: green;
+    }
+  </style>
+</head>
+<body>
+  <h1>Build Your CVE Report</h1>
+  <form id="reportForm">
+    <label for="email">Email:</label>
+    <input type="email" name="email" required />
+
+    <label for="vendors">Vendors (comma-separated):</label>
+    <input type="text" name="vendors" placeholder="e.g. microsoft, sonicwall" required />
+
+    <label for="products">Products (comma-separated):</label>
+    <input type="text" name="products" placeholder="e.g. windows, firewall" required />
+
+    <label for="daysBack">Days Back:</label>
+    <input type="number" name="daysBack" min="1" max="30" value="1" required />
+
+    <button type="submit">Generate Report</button>
+  </form>
+
+  <p id="status"></p>
+
+  <script>
+    document.getElementById("reportForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const form = e.target;
+      const email = form.email.value;
+      const vendors = form.vendors.value.split(",").map(v => v.trim().toLowerCase());
+      const products = form.products.value.split(",").map(p => p.trim().toLowerCase());
+      const
