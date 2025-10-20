@@ -88,8 +88,17 @@ document.getElementById("reportForm").addEventListener("submit", async (e) => {
 
   const form = e.target;
   const email = form.email.value;
-  const vendors = form.vendors.value.split(",").map(v => v.trim().toLowerCase());
-  const products = form.products.value.split(",").map(p => p.trim().toLowerCase());
+  const vendorsRaw = form.vendors.value.trim();
+  const productsRaw = form.products.value.trim();
+
+  // ✅ Validation: Require at least one of vendor or product
+  if (!vendorsRaw && !productsRaw) {
+    alert("Please enter either a vendor or a product.");
+    return;
+  }
+
+  const vendors = vendorsRaw ? vendorsRaw.split(",").map(v => v.trim().toLowerCase()) : [];
+  const products = productsRaw ? productsRaw.split(",").map(p => p.trim().toLowerCase()) : [];
   const daysBack = parseInt(form.daysBack.value);
   const wantsDownload = document.getElementById("downloadToggle").checked;
 
@@ -103,7 +112,7 @@ document.getElementById("reportForm").addEventListener("submit", async (e) => {
     products,
     start_date: startDate.toISOString(),
     end_date: endDate.toISOString(),
-    download: wantsDownload  // optional: include in payload if backend wants it
+    download: wantsDownload
   };
 
   const status = document.getElementById("status");
