@@ -59,6 +59,11 @@
     <label for="daysBack">Days Back:</label>
     <input type="number" name="daysBack" min="1" max="30" value="1" required />
 
+    <label>
+    <input type="checkbox" id="downloadToggle" />
+    Check this to make report link downloadable
+    </label>
+
     <button type="submit">Generate Report</button>
   </form>
 
@@ -78,43 +83,46 @@
   </p>
 
   <script>
-    document.getElementById("reportForm").addEventListener("submit", async (e) => {
-      e.preventDefault();
-      const form = e.target;
-      const email = form.email.value;
-      const vendors = form.vendors.value.split(",").map(v => v.trim().toLowerCase());
-      const products = form.products.value.split(",").map(p => p.trim().toLowerCase());
-      const daysBack = parseInt(form.daysBack.value);
+document.getElementById("reportForm").addEventListener("submit", async (e) => {
+  e.preventDefault();
 
-      const endDate = new Date();
-      const startDate = new Date();
-      startDate.setDate(endDate.getDate() - daysBack);
+  const form = e.target;
+  const email = form.email.value;
+  const vendors = form.vendors.value.split(",").map(v => v.trim().toLowerCase());
+  const products = form.products.value.split(",").map(p => p.trim().toLowerCase());
+  const daysBack = parseInt(form.daysBack.value);
+  const wantsDownload = document.getElementById("downloadToggle").checked;
 
-      const payload = {
-        email,
-        vendors,
-        products,
-        start_date: startDate.toISOString(),
-        end_date: endDate.toISOString()
-      };
+  const endDate = new Date();
+  const startDate = new Date();
+  startDate.setDate(endDate.getDate() - daysBack);
 
-      const status = document.getElementById("status");
-      status.textContent = "Submitting...";
+  const payload = {
+    email,
+    vendors,
+    products,
+    start_date: startDate.toISOString(),
+    end_date: endDate.toISOString(),
+    download: wantsDownload  // optional: include in payload if backend wants it
+  };
 
-      try {
-        const res = await fetch("https://cywitness-api.onrender.com/build-report", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(payload)
-        });
+  const status = document.getElementById("status");
+  status.textContent = "Submitting...";
 
-        const data = await res.json();
-        status.textContent = data.message || "Report submitted!";
-      } catch (err) {
-        status.textContent = "Error submitting report.";
-        console.error(err);
-      }
+  try {
+    const res = await fetch("https://cywitness-api.onrender.com/build-report", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload)
     });
+
+    const data = await res.json();
+    status.textContent = data.message || "Report submitted!";
+  } catch (err) {
+    status.textContent = "Error submitting report.";
+    console.error(err);
+  }
+});
   </script>
 </body>
 <footer>
